@@ -1,0 +1,54 @@
+<!doctype html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<link rel="stylesheet" 
+			  href="//code.jquery.com/ui/1.11.4/themes/smoothness/jquery-ui.css">
+		<script src="//code.jquery.com/jquery-1.10.2.js"></script>
+		<script src="//code.jquery.com/ui/1.11.4/jquery-ui.js"></script>
+		
+		<script>
+			$(function() {
+				$( "#start_date" ).datepicker({
+					dateFormat: 'yy-mm-dd'
+				});
+			  });
+		</script>
+	</head>
+	<body>
+		<h1>Index</h1>
+
+		{% if user %}<p>Hello, {{ user.username }}</p>{% endif %}
+
+		{% if projects %}
+			<ul>
+			{% for project in projects %}
+				<li>
+					<a href="{% url 'labs:project_detail' project.id %}">{{ project.tag }}</a>
+				</li>
+			{% endfor %}
+			</ul>
+		{% else %}
+			<p>No projects available.</p>
+		{% endif %}
+
+		<form action="{% url 'labs:project_create' %}" method="post">
+			{% csrf_token %}
+			<input type="text" name="tag" required placeholder="tag"/>
+			<input name="start_date" id="start_date" required placeholder="start date"/>
+			
+			{% if laboratories %}
+				<select name="laboratory" required>
+					<option value="">Select the lab</option>
+					{% for laboratory in laboratories %}
+						<option value="{{ laboratory.id }}">{{ laboratory.tag }}</option>
+					{% endfor %}
+				</select>
+			{% endif %}
+
+			<input type="submit" value="create" />
+		</form>
+
+		<a href="{% url 'labs:logout_submit' %}">Logout</a>
+	</body>
+</html>

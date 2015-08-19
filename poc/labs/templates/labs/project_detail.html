@@ -1,0 +1,40 @@
+<!doctype html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<link rel="stylesheet" 
+			  href="//code.jquery.com/ui/1.11.4/themes/smoothness/jquery-ui.css">
+		<script src="//code.jquery.com/jquery-1.10.2.js"></script>
+		<script src="//code.jquery.com/ui/1.11.4/jquery-ui.js"></script>
+		
+		<script>
+			$(function() {
+				$( "#in_date" ).datepicker({
+					dateFormat: 'yy-mm-dd'
+				});
+			  });
+		</script>
+	</head>
+	<body>
+		<h1>Detail view - {{ project.pk }}</h1>
+
+		<p>Start date: {{ project.start_date }}</p>
+
+		{% if budget %}
+		<ul>
+			{% for b in budget %}
+				<li>${{ b.value }}</li>
+			{% endfor %}
+		</ul>
+		{% else %}
+			<p>No budget available yet!</p>
+		{% endif%}
+
+		<form action="{% url 'labs:budget_create' project.pk %}" method="post">
+			{% csrf_token %}
+			<input type="number" name="value" step="0.01" placeholder="moneys" />
+			<input name="in_date" id="in_date" required placeholder="in date"/>
+			<input type="submit" value="create" />
+		</form>
+	</body>
+</html>
