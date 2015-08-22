@@ -23,7 +23,7 @@
 		{% if budget %}
 		<ul>
 			{% for b in budget %}
-				<li>${{ b.value }}</li>
+				<li>${{ b.value }} - {{ b.in_date }}</li>
 			{% endfor %}
 		</ul>
 		{% else %}

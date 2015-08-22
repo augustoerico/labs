@@ -6,6 +6,7 @@ from django.contrib.auth.decorators import login_required
 from labs.models import Responsible, Project, Laboratory, Budget
 
 from decimal import Decimal
+import datetime
 
 @login_required(login_url='/labs/login/') # FIXME put the login_url in settings
 def index(request):
@@ -60,7 +61,14 @@ def project_create(request):
 	responsible = Responsible.objects.get(username=user.username)
 	laboratory = Laboratory.objects.get(id=laboratory_id)
 	
-	responsible.project_set.create(laboratory=laboratory, tag=tag, start_date=start_date)
+	project = responsible.project_set.create(laboratory=laboratory, tag=tag, start_date=start_date)
+	
+	# Initialize the project budget for 12 months
+	# FIXME refactor this
+	initial_date = datetime.datetime.strptime(start_date, '%Y-%m-%d').date()
+	for m in range(0, 12):
+		date = add_months(initial_date, m)
+		project.budget_set.create(value=Decimal(0), in_date=date)
 	
 	return redirect('/labs/') # FIXME
 
@@ -73,4 +81,11 @@ def budget_create(request, pk):
 	project = Project.objects.get(pk=pk)
 	project.budget_set.create(value=Decimal(value), in_date=in_date)
 	
-	return redirect(reverse('labs:project_detail', args=(pk,)))
+	return redirect(reverse('labs:project_detail', args=(pk,)))	
+
+def add_months(date, months):
+	
+	month = date.month - 1 + months
+	year = date.year + int(month/12)
+	month = month%12 + 1
+	return datetime.date(year, month, 1)
