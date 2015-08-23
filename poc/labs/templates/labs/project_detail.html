@@ -13,6 +13,40 @@
 					dateFormat: 'yy-mm-dd'
 				});
 			  });
+			
+			function toggle_edit() {				
+				if($('#edit-view').is(':visible')) {
+					$('#edit-view').hide();
+					$('#show-view').show();
+				} else {
+					$('#show-view').hide();
+					$('#edit-view').show();
+				}
+			}
+			
+			function get_form_data() {
+			  var data = {'data': []};
+
+			  $('#values input').each(function() {
+
+				var value = $(this).val();
+				var id = $(this).attr('id');
+
+				data['data'].push(
+				  {'id': id, 'value': value}
+				);
+
+			  });
+
+			  return data;
+			}
+			
+			function save() {
+				var json_str = JSON.stringify(get_form_data());
+				console.log(json_str);
+				$('#budgets').val(json_str); // overwrite the input value
+				$('#budgets_edit').submit();
+			}
 		</script>
 	</head>
 	<body>
@@ -21,20 +55,28 @@
 		<p>Start date: {{ project.start_date }}</p>
 
 		{% if budget %}
-		<ul>
-			{% for b in budget %}
-				<li>${{ b.value }} - {{ b.in_date }}</li>
-			{% endfor %}
-		</ul>
+			<div id="show-view">
+				<ul>
+					{% for b in budget %}
+						<li>${{ b.value }} - {{ b.in_date }}</li>
+					{% endfor %}
+				</ul>
+			</div>
+			<div id="edit-view" style="display: none;">
+				<ul id="values">
+					{% for b in budget %}
+						<li>$<input type="number" step="0.01" id="{{ b.pk }}" value="{{ b.value }}" /> - {{ b.in_date }}</li>
+					{% endfor %}
+				</ul>
+				<form id="budgets_edit" action="{% url 'labs:budgets_edit' project.pk %}" method="post">
+					{% csrf_token %}
+					<input type="hidden" id="budgets" name="budgets" value="" />
+					<input type="button" value="save" onclick="save()" />
+				</form>
+			</div>
+			<input type="button" onclick="javascript:toggle_edit()" value="toggle edit" />
 		{% else %}
 			<p>No budget available yet!</p>
 		{% endif%}
-
-		<form action="{% url 'labs:budget_create' project.pk %}" method="post">
-			{% csrf_token %}
-			<input type="number" name="value" step="0.01" placeholder="moneys" />
-			<input name="in_date" id="in_date" required placeholder="in date"/>
-			<input type="submit" value="create" />
-		</form>
 	</body>
 </html>

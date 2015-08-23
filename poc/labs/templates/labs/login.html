@@ -1,11 +1,55 @@
-<h1>Login page</h1>
+<!doctype html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<script src="//code.jquery.com/jquery-1.10.2.js"></script>
+		
+		<script>
+			function toggle_create_account() {
+				
+				if($('#login_form').is(':visible')) {
+					$('#login_form').hide();
+					$('#create_user_form').show();
+				} else {
+					$('#login_form').show();
+					$('#create_user_form').hide();
+				}
+			}
+		</script>
+	</head>
+	<body>
+		<h1>Welcome</h1>
 
-{% if error_message %}<p><strong>{{ error_message }}</strong></p>{% endif %}
+		{% if error_message %}<p><strong>{{ error_message }}</strong></p>{% endif %}
+		{% if messages %}
+			{% for message in messages %}
+				<p><strong>{{ message }}</strong></p>
+			{% endfor %}
+		{% endif %}
 
-<form action="{% url 'labs:login_submit' %}" method="post">
-    {% csrf_token %}
-	<input type="text" name="username" placeholder="username" />
-	<input type="password" name="password" placeholder="password" />
-	
-	<input type="submit" value="Login" />
-</form>
+		<div id="login_form">
+			<h2>Login</h2>
+			<form action="{% url 'labs:login_submit' %}" method="post">
+				{% csrf_token %}
+				<input type="text" name="username" placeholder="username" />
+				<input type="password" name="password" placeholder="password" />
+
+				<input type="submit" value="Login" />
+			</form>
+		</div>
+
+		<div id="create_user_form" style="display: none;">
+			<h2>Create your account</h2>
+			<form action="{% url 'labs:account_create' %}" method="post">
+				{% csrf_token %}
+				<input type="text" name="username" placeholder="username" />
+				<input type="text" name="email" placeholder="email" />
+				<input type="password" name="password" placeholder="password" />
+				
+				<input type="submit" value="create" />
+			</form>	
+		</div>
+		
+		<input type="button" value="create account" onclick="toggle_create_account()"/>
+	</body>
+</html>

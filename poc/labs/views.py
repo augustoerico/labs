@@ -2,11 +2,14 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth import authenticate, login, logout
 from django.core.urlresolvers import reverse
 from django.contrib.auth.decorators import login_required
+from django.contrib.auth.models import User
+from django.contrib import messages
 
 from labs.models import Responsible, Project, Laboratory, Budget
 
 from decimal import Decimal
 import datetime
+import json
 
 @login_required(login_url='/labs/login/') # FIXME put the login_url in settings
 def index(request):
@@ -82,6 +85,34 @@ def budget_create(request, pk):
 	project.budget_set.create(value=Decimal(value), in_date=in_date)
 	
 	return redirect(reverse('labs:project_detail', args=(pk,)))	
+
+@login_required(login_url='/labs/login/') # FIXME
+def budgets_edit(request, pk):
+	
+	form_data = request.POST['budgets']
+	form_data = json.loads(form_data)
+	
+	for d in form_data['data']:
+		budget = Budget.objects.get(pk=Decimal(d['id']))
+		budget.value = Decimal(d['value'])
+		budget.save()
+	
+	return redirect(reverse('labs:project_detail', args=(pk,)))
+
+def account_create(request):
+	
+	username = request.POST['username']
+	email = request.POST['email']
+	password = request.POST['password']
+	
+	user = User.objects.create_user(username, email, password)
+	if user:
+		messages.add_message(request, messages.SUCCESS, 'Account created.')
+		Responsible.objects.create(username=username)
+	else:
+		messages.add_message(request, messages.ERROR, 'Failed at account creation.')
+	
+	return redirect('labs:login')
 
 def add_months(date, months):
 	
