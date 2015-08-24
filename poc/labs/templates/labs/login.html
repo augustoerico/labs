@@ -42,9 +42,17 @@
 			<h2>Create your account</h2>
 			<form action="{% url 'labs:account_create' %}" method="post">
 				{% csrf_token %}
-				<input type="text" name="username" placeholder="username" />
-				<input type="text" name="email" placeholder="email" />
-				<input type="password" name="password" placeholder="password" />
+				<input type="text" name="username" placeholder="username" required />
+				<input type="text" name="email" placeholder="email" required />
+				<input type="password" name="password" placeholder="password" required />
+				<select name="lab" required>
+					<option valeu="">Lab</option>
+					<option value="HIDR">HIDR</option>
+					<option value="MEC">MEC</option>
+					<option value="FIS">FIS</option>
+					<option value="NUCL">NUCL</option>
+					<option value="AERO">AERO</option>
+				</select>
 				
 				<input type="submit" value="create" />
 			</form>	

@@ -49,6 +49,7 @@
 			<input type="submit" value="create" />
 		</form>
 
+		<a href="{% url 'labs:report' user.username %}" />Generate report</a>
 		<a href="{% url 'labs:logout_submit' %}">Logout</a>
 	</body>
 </html>

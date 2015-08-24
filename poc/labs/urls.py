@@ -12,4 +12,5 @@ urlpatterns = [
 	url(r'^projects/(?P<pk>[0-9]+)/budget/create/$', views.budget_create, name='budget_create'),
 	url(r'^projects/(?P<pk>[0-9]+)/budgets/edit/$', views.budgets_edit, name='budgets_edit'),
 	url(r'^projects/accounts/create/$', views.account_create, name="account_create"),
+	url(r'^projects/(?P<username>.+)/report/$', views.generate_report, name="report"),
 ]
