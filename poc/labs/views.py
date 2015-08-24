@@ -127,8 +127,13 @@ def generate_report(request, username):
 		values = ','.join([ str(b.value) for b in budgets ])
 		line = project.laboratory.tag + ',' + project.tag + ',' + str(project.start_date.year) + ',' + r.username + ',' + values + '\n'
 		out += line
+	
+	response = HttpResponse(content_type='text/plain')
+	response['Content-Disposition'] = 'attachment; filename="report.csv"'
+	response.write(out)
 			
-	return 	HttpResponse(out)
+	#return 	HttpResponse(out)
+	return response
 
 def account_create(request):
 	

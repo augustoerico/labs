@@ -50,9 +50,11 @@
 		</script>
 	</head>
 	<body>
-		<h1>Detail view - {{ project.pk }}</h1>
+		<h1>Detail view - {{ project.tag }}</h1>
 
 		<p>Start date: {{ project.start_date }}</p>
+		
+		<a href="{% url 'labs:index' %}">Back to homepage</a>
 
 		{% if budget %}
 			<div id="show-view">
